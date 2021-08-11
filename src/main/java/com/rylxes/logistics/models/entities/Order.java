@@ -1,6 +1,7 @@
 package com.rylxes.logistics.models.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.rylxes.logistics.misc.OrderStatus;
 import lombok.*;
@@ -47,9 +48,11 @@ public class Order {
     @Column(name = "created_by")
     private Integer createdBy;
 
+
     @Column(name = "created_at", updatable = false)
     @CreationTimestamp
     private Timestamp createdAt;
+
 
 
     @Column(name = "updated_at")

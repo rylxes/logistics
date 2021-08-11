@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,25 +37,6 @@ public class OrderServiceImpl implements OrderService {
         this.orderProcessRepository = orderProcessRepository;
     }
 
-    /**
-     * Maps the Page {@code entities} of <code>T</code> type which have to be mapped as input to {@code dtoClass} Page
-     * of mapped object with <code>D</code> type.
-     *
-     * @param <D>      - type of objects in result page
-     * @param <T>      - type of entity in <code>entityPage</code>
-     * @param entities - page of entities that needs to be mapped
-     * @param dtoClass - class of result page element
-     * @return page - mapped page with objects of type <code>D</code>.
-     * @NB <code>dtoClass</code> must has NoArgsConstructor!
-     */
-    public <D, T> Page<D> mapEntityPageIntoDtoPage(Page<T> entities, Class<D> dtoClass) {
-        return entities.map(objectEntity -> modelMapper.map(objectEntity, dtoClass));
-    }
-
-    private OrderDTO convertToDto(Order order) {
-        OrderDTO postDto = modelMapper.map(order, OrderDTO.class);
-        return postDto;
-    }
 
     @Override
     public Page<Order> getOrders(int pageNo, int pageSize) {
@@ -69,21 +51,22 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order insert(Order order) {
-        order.setCreatedBy(1); // we assume user with order id 1 is the one making the request
-        return orderRepository.save(order);
+    public Order insert(@Validated OrderDTO order) {
+        Order newOrder = modelMapper.map(order, Order.class);
+        newOrder.setCreatedBy(1); // we assume user with order id 1 is the one making the request
+        return orderRepository.save(newOrder);
     }
 
     @Override
-    public void updateOrder(Long id, Order order) {
+    public Order updateOrder(Long id, @Validated OrderDTO newOrder) {
+        Order order = modelMapper.map(newOrder, Order.class);
         Order orderFromDb = orderRepository.findById(id).orElseThrow(() -> new RuntimeException("Order not found"));
         log.info(orderFromDb.toString());
         orderFromDb.setName(order.getName());
         orderFromDb.setQuantity(order.getQuantity());
         orderFromDb.setAddress(order.getAddress());
         orderFromDb.setPackageContent(order.getPackageContent());
-        orderRepository.save(orderFromDb);
-
+        return orderRepository.save(orderFromDb);
     }
 
 

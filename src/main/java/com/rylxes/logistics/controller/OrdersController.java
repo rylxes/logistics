@@ -1,4 +1,4 @@
-package com.rylxes.logistics.Controller;
+package com.rylxes.logistics.controller;
 
 
 import com.rylxes.logistics.misc.OrderStatus;
@@ -7,16 +7,12 @@ import com.rylxes.logistics.models.entities.Order;
 import com.rylxes.logistics.service.OrderService;
 import io.swagger.annotations.Api;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import javax.validation.Valid;
 
 
 @RestController
@@ -50,19 +46,15 @@ public class OrdersController {
     //The function receives a POST request, processes it, creates a new Order and saves it to the database, and returns a resource link to the created order.
     @ResponseBody
     @PostMapping(value = "/create", produces = "application/json")
-    public ResponseEntity<Order> saveOrder(@RequestBody Order order) {
-        Order order1 = orderService.insert(order);
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add("order", "/api/v1/order/" + order1.getId().toString());
-        return new ResponseEntity<>(order1, httpHeaders, HttpStatus.CREATED);
+    public ResponseEntity<Order> saveOrder(@Valid @RequestBody OrderDTO order) {
+        return new ResponseEntity<>(orderService.insert(order), HttpStatus.CREATED);
     }
 
     //The function receives a PUT request, updates the Order with the specified Id and returns the updated Order
     @ResponseBody
     @PutMapping(value = "/{orderId}", produces = "application/json")
-    public ResponseEntity<Order> updateOrder(@PathVariable("orderId") Long orderId, @RequestBody Order order) {
-        orderService.updateOrder(orderId, order);
-        return new ResponseEntity<>(orderService.getOrderId(orderId), HttpStatus.OK);
+    public ResponseEntity<Order> updateOrder(@PathVariable("orderId") Long orderId, @Valid @RequestBody OrderDTO order) {
+        return new ResponseEntity<>(orderService.updateOrder(orderId, order), HttpStatus.OK);
     }
 
 

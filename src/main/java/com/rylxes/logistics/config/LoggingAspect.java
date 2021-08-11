@@ -1,4 +1,4 @@
-package com.rylxes.logistics.Config;
+package com.rylxes.logistics.config;
 
 
 import org.aspectj.lang.JoinPoint;

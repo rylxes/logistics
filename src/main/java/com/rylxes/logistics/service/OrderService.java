@@ -14,9 +14,9 @@ public interface OrderService {
 
     Order getOrderId(Long id);
 
-    Order insert(Order order);
+    Order insert(OrderDTO order);
 
-    void updateOrder(Long id, Order order);
+    Order updateOrder(Long id, OrderDTO order);
 
     void updateOrderStatus(Long id, OrderStatus orderStatus);
 
